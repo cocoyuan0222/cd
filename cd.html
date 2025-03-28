@@ -40,19 +40,23 @@
         /* 播放针 */
         .needle {
             position: absolute;
-            top: -20px;
-            right: -30px;
-            width: 100px;
+            width: 80px;
             height: 150px;
-            background: url('cd stick.png') no-repeat center/cover;
+            background: url('cd stick.png') no-repeat center/contain;
             transform-origin: top right;
-            transform: rotate(-15deg); /* 默认稍微抬起 */
             transition: transform 0.5s ease-in-out;
+        }
+
+        /* 调整针的位置 */
+        .needle {
+            top: -30px; /* 让针更靠近CD */
+            right: 30px;
+            transform: rotate(-25deg); /* 初始状态，远离CD */
         }
 
         /* 播放时播放针落到 CD 上 */
         .playing .needle {
-            transform: rotate(0deg);
+            transform: rotate(-5deg);
         }
 
         .controls {
@@ -83,7 +87,7 @@
     </div>
 
     <div class="controls">
-        <button class="button" onclick="toggleMusic()">播放 / 暂停</button>
+        <button class="button" id="playButton">播放 / 暂停</button>
     </div>
 
     <audio id="audio" src="music.mp3"></audio>
@@ -93,18 +97,28 @@
         let cd = document.getElementById('cd');
         let needle = document.getElementById('needle');
         let container = document.querySelector('.player-container');
+        let playButton = document.getElementById('playButton');
 
         function toggleMusic() {
             if (audio.paused) {
-                audio.play();
-                cd.style.animationPlayState = 'running'; // CD 旋转
-                container.classList.add('playing'); // 播放针放下
+                audio.play().then(() => {
+                    console.log("音乐播放中...");
+                    cd.style.animationPlayState = 'running'; // CD 旋转
+                    container.classList.add('playing'); // 播放针放下
+                    playButton.textContent = "暂停";
+                }).catch(error => {
+                    console.error("播放失败:", error);
+                });
             } else {
                 audio.pause();
+                console.log("音乐暂停...");
                 cd.style.animationPlayState = 'paused'; // CD 停止旋转
                 container.classList.remove('playing'); // 播放针抬起
+                playButton.textContent = "播放";
             }
         }
+
+        playButton.addEventListener('click', toggleMusic);
     </script>
 
 </body>
