@@ -15,13 +15,13 @@
             margin: 0;
         }
 
-        .cd-container {
+        .player-container {
             position: relative;
-            width: 200px;
-            height: 200px;
-            margin-bottom: 20px;
+            width: 250px;
+            height: 250px;
         }
 
+        /* CD 旋转 */
         .cd {
             width: 100%;
             height: 100%;
@@ -29,7 +29,7 @@
             background: url('cd.png') no-repeat center/cover;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             animation: spin 3s linear infinite;
-            animation-play-state: paused; /* 初始暂停 */
+            animation-play-state: paused;
         }
 
         @keyframes spin {
@@ -37,9 +37,26 @@
             to { transform: rotate(360deg); }
         }
 
+        /* 播放针 */
+        .needle {
+            position: absolute;
+            top: -20px;
+            right: -30px;
+            width: 100px;
+            height: 150px;
+            background: url('cd-stick.png') no-repeat center/cover;
+            transform-origin: top right;
+            transform: rotate(-15deg); /* 默认稍微抬起 */
+            transition: transform 0.5s ease-in-out;
+        }
+
+        /* 播放时播放针落到 CD 上 */
+        .playing .needle {
+            transform: rotate(0deg);
+        }
+
         .controls {
-            display: flex;
-            gap: 10px;
+            margin-top: 20px;
         }
 
         .button {
@@ -60,27 +77,32 @@
 </head>
 <body>
 
-    <div class="cd-container">
-        <div class="cd" id="cd"></div>
+    <div class="player-container">
+        <div class="needle" id="needle"></div> <!-- 播放针 -->
+        <div class="cd" id="cd"></div> <!-- CD -->
     </div>
 
     <div class="controls">
         <button class="button" onclick="toggleMusic()">播放 / 暂停</button>
     </div>
 
-    <audio id="audio" src="和谐的乐曲11-改.mp3"></audio>
+    <audio id="audio" src="music.mp3"></audio>
 
     <script>
         let audio = document.getElementById('audio');
         let cd = document.getElementById('cd');
+        let needle = document.getElementById('needle');
+        let container = document.querySelector('.player-container');
 
         function toggleMusic() {
             if (audio.paused) {
                 audio.play();
-                cd.style.animationPlayState = 'running'; // 让CD旋转
+                cd.style.animationPlayState = 'running'; // CD 旋转
+                container.classList.add('playing'); // 播放针放下
             } else {
                 audio.pause();
-                cd.style.animationPlayState = 'paused'; // 停止旋转
+                cd.style.animationPlayState = 'paused'; // CD 停止旋转
+                container.classList.remove('playing'); // 播放针抬起
             }
         }
     </script>
